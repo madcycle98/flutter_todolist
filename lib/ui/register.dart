@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list/services/supabase_service.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -8,13 +11,17 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final SupabaseService _supabaseService = SupabaseService();
   final _registerFormKey = GlobalKey<FormState>();
-  final _usernameTEC = TextEditingController();
-  final _passwordTEC = TextEditingController();
+  final TextEditingController _usernameTEC = TextEditingController();
+  final TextEditingController _passwordTEC = TextEditingController();
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24,64,24,64),
           child: Center(
@@ -46,6 +53,14 @@ class _RegisterState extends State<Register> {
                           decoration: InputDecoration(
                             hintText: 'Enter your username'
                           ),
+                          keyboardType: TextInputType.text,
+                          validator: (value){
+                            if(value!.length < 8){
+                              return 'Your password must be at least 8 characters long.';
+                            }else{
+                              return null;
+                            }
+                          },
                         ),
                         Text(
                           style: TextTheme.of(context).bodyMedium,
@@ -77,14 +92,44 @@ class _RegisterState extends State<Register> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 24.0),
-                          child: ElevatedButton(
-                            onPressed: (){
-                              print(_passwordTEC);
-                              print(_usernameTEC);
-                            },
-                            child:
-                              Text('Register')),
-                        )
+                          child:
+                          isLoading == true ?
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                              ),
+                            )
+                          : ElevatedButton(
+                              onPressed: () async {
+                                if(_registerFormKey.currentState!.validate()){
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                } try {
+                                  await _supabaseService.signup(_usernameTEC.text, _passwordTEC.text);
+                                } catch (error) {
+                                  showTopSnackBar(
+                                    Overlay.of(context),
+                                    CustomSnackBar.error(
+                                      message:
+                                      error.toString(),
+                                    ),
+                                  );
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
+                              },
+                              child:
+                                Text('Register'))
+                          )
                       ],
                     ),
                   )
