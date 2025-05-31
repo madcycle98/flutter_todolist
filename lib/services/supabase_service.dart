@@ -55,4 +55,20 @@ class SupabaseService {
     }
   }
 
+  Future signup(String email, String password) async {
+    try {
+      await client.auth.signUp(email: email, password: password);
+    } on AuthApiException catch (error) {
+      if(kDebugMode) {
+        print(">>>>>> SIGNUP ERROR: ${error.message}");
+      }
+      throw error.message;
+    } catch (e) {
+      if(kDebugMode) {
+        print(">>>>>> GENERIC SIGNUP ERROR");
+      }
+      throw ">>>>>> GENERIC SIGNUP ERROR";
+    }
+  }
+
 }
