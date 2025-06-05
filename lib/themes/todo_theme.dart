@@ -5,10 +5,12 @@ class TodoTheme {
 
   static Color backgroundGreen = const Color.fromRGBO(36, 161, 156, 1);
   static Color backgroundGreen2 = const Color.fromRGBO(42, 171, 238, 1);
+  static Color backgroundGrey = const Color.fromRGBO(230, 230, 230, 1);
   static Color white = const Color.fromRGBO(255, 255, 255, 1);
   static Color black = const Color.fromRGBO(0, 0, 0, 1);
   static Color textGrey = const Color.fromRGBO(118, 126, 140, 1);
   static Color ghostGrey = const Color.fromRGBO(169, 176, 197, 1);
+  static Color red = const Color.fromRGBO(180, 17, 17, 1.0);
 
   static ThemeData lightMode = ThemeData(
     scaffoldBackgroundColor: white,
@@ -83,5 +85,9 @@ class TodoTheme {
         ),
       ),
     ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: backgroundGreen,
+      elevation: 0,
+    )
   );
 }
